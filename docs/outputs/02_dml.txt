@@ -1,0 +1,67 @@
+BEGIN
+== INSERT ... RETURNING (new venue and club)
+ venue_id |   name   | capacity 
+----------+----------+----------
+        7 | Demo Lab |       30
+(1 row)
+
+INSERT 0 1
+ club_id |   name    
+---------+-----------
+       5 | Demo Club
+(1 row)
+
+INSERT 0 1
+== multi-row INSERT with a sub-select
+ category_id |    name    | parent_category_id 
+-------------+------------+--------------------
+          10 | Demo Sub A |                  1
+          11 | Demo Sub B |                  1
+(2 rows)
+
+INSERT 0 2
+== UPDATE ... RETURNING
+   name   | capacity 
+----------+----------
+ Demo Lab |       40
+(1 row)
+
+UPDATE 1
+== UPDATE using a join (FROM): deactivate the venue called Old Hall
+   name   | is_active 
+----------+-----------
+ Old Hall | f
+(1 row)
+
+UPDATE 1
+== UPSERT: INSERT ... ON CONFLICT DO UPDATE
+ club_id | student_id |  member_role  | joined_on  
+---------+------------+---------------+------------
+       1 |          5 | OFFICE_BEARER | 2026-10-25
+(1 row)
+
+INSERT 0 1
+== DELETE ... RETURNING
+ category_id |    name    
+-------------+------------
+          10 | Demo Sub A
+          11 | Demo Sub B
+(2 rows)
+
+DELETE 2
+ club_id |   name    
+---------+-----------
+       5 | Demo Club
+(1 row)
+
+DELETE 1
+== DELETE blocked by a foreign key (RESTRICT): a parent category that still has children cannot be deleted
+psql:02_dml.sql:29: ERROR:  update or delete on table "event_categories" violates foreign key constraint "event_categories_parent_category_id_fkey" on table "event_categories"
+DETAIL:  Key (category_id)=(1) is still referenced from table "event_categories".
+ROLLBACK
+== after ROLLBACK nothing from this script persists:
+ demo_venues | demo_clubs 
+-------------+------------
+           0 |          0
+(1 row)
+

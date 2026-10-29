@@ -1,0 +1,222 @@
+Border style is 2.
+== R1 Roles that exist and what they can do
++------------------+-----------+----------+
+|     rolname      | can_login | inherits |
++------------------+-----------+----------+
+| app_campus_admin | f         | t        |
+| app_club_admin   | f         | t        |
+| app_student      | f         | t        |
+| clubconnect_app  | t         | f        |
++------------------+-----------+----------+
+(4 rows)
+
++------------------+---------------+-----------------------------+
+|     grantee      |  table_name   |         privileges          |
++------------------+---------------+-----------------------------+
+| app_campus_admin | clubs         | DELETE,INSERT,SELECT,UPDATE |
+| app_club_admin   | clubs         | SELECT                      |
+| app_student      | clubs         | SELECT                      |
+| app_campus_admin | events        | SELECT                      |
+| app_club_admin   | events        | SELECT                      |
+| app_student      | events        | SELECT                      |
+| app_campus_admin | registrations | SELECT                      |
+| app_club_admin   | registrations | SELECT                      |
+| app_student      | registrations | SELECT                      |
++------------------+---------------+-----------------------------+
+(9 rows)
+
+== R2 Column-level privileges
+-- columns of users that each role may SELECT (password_hash is in nobody's list):
++------------------+--------------------------------------------------------+
+|     grantee      |                    readable_columns                    |
++------------------+--------------------------------------------------------+
+| app_campus_admin | user_id, email, full_name, role, is_active, created_at |
+| app_club_admin   | user_id, email, full_name, role, is_active, created_at |
+| app_student      | user_id, email, full_name, role, is_active, created_at |
++------------------+--------------------------------------------------------+
+(3 rows)
+
+-- columns of events that a CLUB ADMIN may write (note: no status, no reviewed_* columns):
++-------------------------------------------------------------------------------------------------------------------------------------+
+|                                                  club_admin_writable_event_columns                                                  |
++-------------------------------------------------------------------------------------------------------------------------------------+
+| capacity, category_id, description, eligibility, end_time, fee, manual_approval, registration_deadline, start_time, title, venue_id |
++-------------------------------------------------------------------------------------------------------------------------------------+
+(1 row)
+
++-------------------------------------+
+| roles_that_can_update_events_status |
++-------------------------------------+
+|                                   0 |
++-------------------------------------+
+(1 row)
+
+== R3 Row-level security policies
++----------------------+------------------------------+--------+-----------------------------------------------+
+|      tablename       |          policyname          |  cmd   |                     roles                     |
++----------------------+------------------------------+--------+-----------------------------------------------+
+| attendance           | att_visible                  | SELECT | {app_campus_admin,app_club_admin,app_student} |
+| club_admins          | club_admins_campus           | ALL    | {app_campus_admin}                            |
+| club_admins          | club_admins_club             | SELECT | {app_club_admin}                              |
+| club_members         | members_campus_sel           | SELECT | {app_campus_admin}                            |
+| club_members         | members_club_sel             | SELECT | {app_club_admin}                              |
+| club_members         | members_club_upd             | UPDATE | {app_club_admin}                              |
+| club_members         | members_student_del          | DELETE | {app_student}                                 |
+| club_members         | members_student_ins          | INSERT | {app_student}                                 |
+| club_members         | members_student_sel          | SELECT | {app_student}                                 |
+| clubs                | clubs_campus_del             | DELETE | {app_campus_admin}                            |
+| clubs                | clubs_campus_ins             | INSERT | {app_campus_admin}                            |
+| clubs                | clubs_campus_upd             | UPDATE | {app_campus_admin}                            |
+| clubs                | clubs_own_upd                | UPDATE | {app_club_admin}                              |
+| clubs                | clubs_read                   | SELECT | {app_campus_admin,app_club_admin,app_student} |
+| event_status_history | hist_campus                  | SELECT | {app_campus_admin}                            |
+| event_status_history | hist_club                    | SELECT | {app_club_admin}                              |
+| events               | events_campus_sel            | SELECT | {app_campus_admin}                            |
+| events               | events_club_ins              | INSERT | {app_club_admin}                              |
+| events               | events_club_sel              | SELECT | {app_club_admin}                              |
+| events               | events_club_upd              | UPDATE | {app_club_admin}                              |
+| events               | events_student_sel           | SELECT | {app_student}                                 |
+| notifications        | notif_own_del                | DELETE | {app_campus_admin,app_club_admin,app_student} |
+| notifications        | notif_own_sel                | SELECT | {app_campus_admin,app_club_admin,app_student} |
+| notifications        | notif_own_upd                | UPDATE | {app_campus_admin,app_club_admin,app_student} |
+| registrations        | reg_campus                   | SELECT | {app_campus_admin}                            |
+| registrations        | reg_club                     | SELECT | {app_club_admin}                              |
+| registrations        | reg_student                  | SELECT | {app_student}                                 |
+| students             | students_campus              | SELECT | {app_campus_admin}                            |
+| students             | students_club                | SELECT | {app_club_admin}                              |
+| students             | students_self                | SELECT | {app_student}                                 |
+| students             | students_self_upd            | UPDATE | {app_student}                                 |
+| users                | users_campus_select          | SELECT | {app_campus_admin}                            |
+| users                | users_campus_update          | UPDATE | {app_campus_admin}                            |
+| users                | users_club_sees_participants | SELECT | {app_club_admin}                              |
+| users                | users_self_select            | SELECT | {app_campus_admin,app_club_admin,app_student} |
+| users                | users_self_update            | UPDATE | {app_campus_admin,app_club_admin,app_student} |
++----------------------+------------------------------+--------+-----------------------------------------------+
+(36 rows)
+
+== R4 STUDENT: sees published events (plus cancelled ones they registered for), only own registrations, cannot read other users
+BEGIN
++------------+
+| set_config |
++------------+
+| 5          |
++------------+
+(1 row)
+
+SET
++-----------+-------+
+|  status   | count |
++-----------+-------+
+| APPROVED  |    10 |
+| CANCELLED |     1 |
++-----------+-------+
+(2 rows)
+
++------------------+---------------------------+
+| my_registrations | distinct_students_visible |
++------------------+---------------------------+
+|                9 |                         1 |
++------------------+---------------------------+
+(1 row)
+
++---------------+
+| users_visible |
++---------------+
+|             1 |
++---------------+
+(1 row)
+
+psql:05_rbac.sql:29: ERROR:  permission denied for table users
+psql:05_rbac.sql:30: ERROR:  permission denied for table events
+psql:05_rbac.sql:31: ERROR:  permission denied for table venues
+psql:05_rbac.sql:32: ERROR:  permission denied for view club_participants
+ROLLBACK
+== R5 CLUB_ADMIN (Music Club only): sees own drafts/pending, not other clubs' drafts; cannot approve; cannot touch status directly
+BEGIN
++------------+
+| set_config |
++------------+
+| 3          |
++------------+
+(1 row)
+
+SET
++------------------+------------------+-------+
+|       club       |      status      | count |
++------------------+------------------+-------+
+| AI/ML Society    | APPROVED         |     2 |
+| Coding Club      | APPROVED         |     3 |
+| Music Club       | APPROVED         |     2 |
+| Music Club       | CANCELLED        |     1 |
+| Music Club       | PENDING_APPROVAL |     1 |
+| Music Club       | REJECTED         |     1 |
+| Photography Club | APPROVED         |     3 |
++------------------+------------------+-------+
+(7 rows)
+
+psql:05_rbac.sql:38: ERROR:  permission denied for table events
+psql:05_rbac.sql:39: ERROR:  permission denied for function review_event
+psql:05_rbac.sql:40: ERROR:  permission denied for function create_staff_user
+ROLLBACK
+== R6 CAMPUS_ADMIN: sees everything, may approve; still cannot read password hashes
+BEGIN
++------------+
+| set_config |
++------------+
+| 1          |
++------------+
+(1 row)
+
+SET
++------------------+-------+
+|      status      | count |
++------------------+-------+
+| APPROVED         |    10 |
+| CANCELLED        |     1 |
+| PENDING_APPROVAL |     2 |
+| REJECTED         |     1 |
++------------------+-------+
+(4 rows)
+
+psql:05_rbac.sql:46: ERROR:  permission denied for table users
+ROLLBACK
+== R7 No identity (app.user_id unset): personal data is hidden; only public published events remain visible
+BEGIN
+SET
++----------------+
+| events_visible |
++----------------+
+|             10 |
++----------------+
+(1 row)
+
++-----------------------+
+| registrations_visible |
++-----------------------+
+|                     0 |
++-----------------------+
+(1 row)
+
+ROLLBACK
+== R8 The single login role used by the web app cannot do anything until it switches role; PUBLIC cannot execute our functions
++-----------------------------+
+| public_can_execute_register |
++-----------------------------+
+| f                           |
++-----------------------------+
+(1 row)
+
++-------------+--------------------+-------------------+
+| student_can | student_can_review | campus_can_review |
++-------------+--------------------+-------------------+
+| t           | f                  | t                 |
++-------------+--------------------+-------------------+
+(1 row)
+
++---------------------------------------+
+| login_role_can_select_events_directly |
++---------------------------------------+
+| f                                     |
++---------------------------------------+
+(1 row)
+

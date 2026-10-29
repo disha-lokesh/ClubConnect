@@ -1,0 +1,518 @@
+Border style is 2.
+== F1 The stored functions and triggers that exist
++--------------------------+-----------------------------------------------------------------------------------------------+------------------+
+|         function         |                                             args                                              |     security     |
++--------------------------+-----------------------------------------------------------------------------------------------+------------------+
+| app_role                 |                                                                                               | SECURITY DEFINER |
+| app_user_id              |                                                                                               | INVOKER          |
+| authenticate_lookup      | p_email text                                                                                  | SECURITY DEFINER |
+| available_seats          | p_event_id bigint                                                                             | SECURITY DEFINER |
+| cancel_event             | p_event_id bigint, p_reason text                                                              | SECURITY DEFINER |
+| cancel_registration      | p_registration_id bigint                                                                      | SECURITY DEFINER |
+| cash_dist                | money, money                                                                                  | INVOKER          |
+| cc_fail                  | p_code text, p_msg text                                                                       | INVOKER          |
+| check_event_conflicts    | p_event_id bigint                                                                             | SECURITY DEFINER |
+| create_staff_user        | p_email text, p_hash text, p_name text, p_role text, p_club_id bigint DEFAULT NULL::bigint    | SECURITY DEFINER |
+| date_dist                | date, date                                                                                    | INVOKER          |
+| decide_registration      | p_registration_id bigint, p_approve boolean                                                   | SECURITY DEFINER |
+| event_summary            | p_event_id bigint                                                                             | SECURITY DEFINER |
+| float4_dist              | real, real                                                                                    | INVOKER          |
+| float8_dist              | double precision, double precision                                                            | INVOKER          |
+| gbt_bit_compress         | internal                                                                                      | INVOKER          |
+| gbt_bit_consistent       | internal, bit, smallint, oid, internal                                                        | INVOKER          |
+| gbt_bit_penalty          | internal, internal, internal                                                                  | INVOKER          |
+| gbt_bit_picksplit        | internal, internal                                                                            | INVOKER          |
+| gbt_bit_same             | gbtreekey_var, gbtreekey_var, internal                                                        | INVOKER          |
+| gbt_bit_union            | internal, internal                                                                            | INVOKER          |
+| gbt_bool_compress        | internal                                                                                      | INVOKER          |
+| gbt_bool_consistent      | internal, boolean, smallint, oid, internal                                                    | INVOKER          |
+| gbt_bool_fetch           | internal                                                                                      | INVOKER          |
+| gbt_bool_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_bool_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_bool_same            | gbtreekey2, gbtreekey2, internal                                                              | INVOKER          |
+| gbt_bool_union           | internal, internal                                                                            | INVOKER          |
+| gbt_bpchar_compress      | internal                                                                                      | INVOKER          |
+| gbt_bpchar_consistent    | internal, character, smallint, oid, internal                                                  | INVOKER          |
+| gbt_bytea_compress       | internal                                                                                      | INVOKER          |
+| gbt_bytea_consistent     | internal, bytea, smallint, oid, internal                                                      | INVOKER          |
+| gbt_bytea_penalty        | internal, internal, internal                                                                  | INVOKER          |
+| gbt_bytea_picksplit      | internal, internal                                                                            | INVOKER          |
+| gbt_bytea_same           | gbtreekey_var, gbtreekey_var, internal                                                        | INVOKER          |
+| gbt_bytea_union          | internal, internal                                                                            | INVOKER          |
+| gbt_cash_compress        | internal                                                                                      | INVOKER          |
+| gbt_cash_consistent      | internal, money, smallint, oid, internal                                                      | INVOKER          |
+| gbt_cash_distance        | internal, money, smallint, oid, internal                                                      | INVOKER          |
+| gbt_cash_fetch           | internal                                                                                      | INVOKER          |
+| gbt_cash_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_cash_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_cash_same            | gbtreekey16, gbtreekey16, internal                                                            | INVOKER          |
+| gbt_cash_union           | internal, internal                                                                            | INVOKER          |
+| gbt_date_compress        | internal                                                                                      | INVOKER          |
+| gbt_date_consistent      | internal, date, smallint, oid, internal                                                       | INVOKER          |
+| gbt_date_distance        | internal, date, smallint, oid, internal                                                       | INVOKER          |
+| gbt_date_fetch           | internal                                                                                      | INVOKER          |
+| gbt_date_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_date_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_date_same            | gbtreekey8, gbtreekey8, internal                                                              | INVOKER          |
+| gbt_date_union           | internal, internal                                                                            | INVOKER          |
+| gbt_decompress           | internal                                                                                      | INVOKER          |
+| gbt_enum_compress        | internal                                                                                      | INVOKER          |
+| gbt_enum_consistent      | internal, anyenum, smallint, oid, internal                                                    | INVOKER          |
+| gbt_enum_fetch           | internal                                                                                      | INVOKER          |
+| gbt_enum_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_enum_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_enum_same            | gbtreekey8, gbtreekey8, internal                                                              | INVOKER          |
+| gbt_enum_union           | internal, internal                                                                            | INVOKER          |
+| gbt_float4_compress      | internal                                                                                      | INVOKER          |
+| gbt_float4_consistent    | internal, real, smallint, oid, internal                                                       | INVOKER          |
+| gbt_float4_distance      | internal, real, smallint, oid, internal                                                       | INVOKER          |
+| gbt_float4_fetch         | internal                                                                                      | INVOKER          |
+| gbt_float4_penalty       | internal, internal, internal                                                                  | INVOKER          |
+| gbt_float4_picksplit     | internal, internal                                                                            | INVOKER          |
+| gbt_float4_same          | gbtreekey8, gbtreekey8, internal                                                              | INVOKER          |
+| gbt_float4_union         | internal, internal                                                                            | INVOKER          |
+| gbt_float8_compress      | internal                                                                                      | INVOKER          |
+| gbt_float8_consistent    | internal, double precision, smallint, oid, internal                                           | INVOKER          |
+| gbt_float8_distance      | internal, double precision, smallint, oid, internal                                           | INVOKER          |
+| gbt_float8_fetch         | internal                                                                                      | INVOKER          |
+| gbt_float8_penalty       | internal, internal, internal                                                                  | INVOKER          |
+| gbt_float8_picksplit     | internal, internal                                                                            | INVOKER          |
+| gbt_float8_same          | gbtreekey16, gbtreekey16, internal                                                            | INVOKER          |
+| gbt_float8_union         | internal, internal                                                                            | INVOKER          |
+| gbt_inet_compress        | internal                                                                                      | INVOKER          |
+| gbt_inet_consistent      | internal, inet, smallint, oid, internal                                                       | INVOKER          |
+| gbt_inet_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_inet_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_inet_same            | gbtreekey16, gbtreekey16, internal                                                            | INVOKER          |
+| gbt_inet_union           | internal, internal                                                                            | INVOKER          |
+| gbt_int2_compress        | internal                                                                                      | INVOKER          |
+| gbt_int2_consistent      | internal, smallint, smallint, oid, internal                                                   | INVOKER          |
+| gbt_int2_distance        | internal, smallint, smallint, oid, internal                                                   | INVOKER          |
+| gbt_int2_fetch           | internal                                                                                      | INVOKER          |
+| gbt_int2_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_int2_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_int2_same            | gbtreekey4, gbtreekey4, internal                                                              | INVOKER          |
+| gbt_int2_union           | internal, internal                                                                            | INVOKER          |
+| gbt_int4_compress        | internal                                                                                      | INVOKER          |
+| gbt_int4_consistent      | internal, integer, smallint, oid, internal                                                    | INVOKER          |
+| gbt_int4_distance        | internal, integer, smallint, oid, internal                                                    | INVOKER          |
+| gbt_int4_fetch           | internal                                                                                      | INVOKER          |
+| gbt_int4_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_int4_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_int4_same            | gbtreekey8, gbtreekey8, internal                                                              | INVOKER          |
+| gbt_int4_union           | internal, internal                                                                            | INVOKER          |
+| gbt_int8_compress        | internal                                                                                      | INVOKER          |
+| gbt_int8_consistent      | internal, bigint, smallint, oid, internal                                                     | INVOKER          |
+| gbt_int8_distance        | internal, bigint, smallint, oid, internal                                                     | INVOKER          |
+| gbt_int8_fetch           | internal                                                                                      | INVOKER          |
+| gbt_int8_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_int8_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_int8_same            | gbtreekey16, gbtreekey16, internal                                                            | INVOKER          |
+| gbt_int8_union           | internal, internal                                                                            | INVOKER          |
+| gbt_intv_compress        | internal                                                                                      | INVOKER          |
+| gbt_intv_consistent      | internal, interval, smallint, oid, internal                                                   | INVOKER          |
+| gbt_intv_decompress      | internal                                                                                      | INVOKER          |
+| gbt_intv_distance        | internal, interval, smallint, oid, internal                                                   | INVOKER          |
+| gbt_intv_fetch           | internal                                                                                      | INVOKER          |
+| gbt_intv_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_intv_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_intv_same            | gbtreekey32, gbtreekey32, internal                                                            | INVOKER          |
+| gbt_intv_union           | internal, internal                                                                            | INVOKER          |
+| gbt_macad8_compress      | internal                                                                                      | INVOKER          |
+| gbt_macad8_consistent    | internal, macaddr8, smallint, oid, internal                                                   | INVOKER          |
+| gbt_macad8_fetch         | internal                                                                                      | INVOKER          |
+| gbt_macad8_penalty       | internal, internal, internal                                                                  | INVOKER          |
+| gbt_macad8_picksplit     | internal, internal                                                                            | INVOKER          |
+| gbt_macad8_same          | gbtreekey16, gbtreekey16, internal                                                            | INVOKER          |
+| gbt_macad8_union         | internal, internal                                                                            | INVOKER          |
+| gbt_macad_compress       | internal                                                                                      | INVOKER          |
+| gbt_macad_consistent     | internal, macaddr, smallint, oid, internal                                                    | INVOKER          |
+| gbt_macad_fetch          | internal                                                                                      | INVOKER          |
+| gbt_macad_penalty        | internal, internal, internal                                                                  | INVOKER          |
+| gbt_macad_picksplit      | internal, internal                                                                            | INVOKER          |
+| gbt_macad_same           | gbtreekey16, gbtreekey16, internal                                                            | INVOKER          |
+| gbt_macad_union          | internal, internal                                                                            | INVOKER          |
+| gbt_numeric_compress     | internal                                                                                      | INVOKER          |
+| gbt_numeric_consistent   | internal, numeric, smallint, oid, internal                                                    | INVOKER          |
+| gbt_numeric_penalty      | internal, internal, internal                                                                  | INVOKER          |
+| gbt_numeric_picksplit    | internal, internal                                                                            | INVOKER          |
+| gbt_numeric_same         | gbtreekey_var, gbtreekey_var, internal                                                        | INVOKER          |
+| gbt_numeric_union        | internal, internal                                                                            | INVOKER          |
+| gbt_oid_compress         | internal                                                                                      | INVOKER          |
+| gbt_oid_consistent       | internal, oid, smallint, oid, internal                                                        | INVOKER          |
+| gbt_oid_distance         | internal, oid, smallint, oid, internal                                                        | INVOKER          |
+| gbt_oid_fetch            | internal                                                                                      | INVOKER          |
+| gbt_oid_penalty          | internal, internal, internal                                                                  | INVOKER          |
+| gbt_oid_picksplit        | internal, internal                                                                            | INVOKER          |
+| gbt_oid_same             | gbtreekey8, gbtreekey8, internal                                                              | INVOKER          |
+| gbt_oid_union            | internal, internal                                                                            | INVOKER          |
+| gbt_text_compress        | internal                                                                                      | INVOKER          |
+| gbt_text_consistent      | internal, text, smallint, oid, internal                                                       | INVOKER          |
+| gbt_text_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_text_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_text_same            | gbtreekey_var, gbtreekey_var, internal                                                        | INVOKER          |
+| gbt_text_union           | internal, internal                                                                            | INVOKER          |
+| gbt_time_compress        | internal                                                                                      | INVOKER          |
+| gbt_time_consistent      | internal, time without time zone, smallint, oid, internal                                     | INVOKER          |
+| gbt_time_distance        | internal, time without time zone, smallint, oid, internal                                     | INVOKER          |
+| gbt_time_fetch           | internal                                                                                      | INVOKER          |
+| gbt_time_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_time_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_time_same            | gbtreekey16, gbtreekey16, internal                                                            | INVOKER          |
+| gbt_time_union           | internal, internal                                                                            | INVOKER          |
+| gbt_timetz_compress      | internal                                                                                      | INVOKER          |
+| gbt_timetz_consistent    | internal, time with time zone, smallint, oid, internal                                        | INVOKER          |
+| gbt_ts_compress          | internal                                                                                      | INVOKER          |
+| gbt_ts_consistent        | internal, timestamp without time zone, smallint, oid, internal                                | INVOKER          |
+| gbt_ts_distance          | internal, timestamp without time zone, smallint, oid, internal                                | INVOKER          |
+| gbt_ts_fetch             | internal                                                                                      | INVOKER          |
+| gbt_ts_penalty           | internal, internal, internal                                                                  | INVOKER          |
+| gbt_ts_picksplit         | internal, internal                                                                            | INVOKER          |
+| gbt_ts_same              | gbtreekey16, gbtreekey16, internal                                                            | INVOKER          |
+| gbt_ts_union             | internal, internal                                                                            | INVOKER          |
+| gbt_tstz_compress        | internal                                                                                      | INVOKER          |
+| gbt_tstz_consistent      | internal, timestamp with time zone, smallint, oid, internal                                   | INVOKER          |
+| gbt_tstz_distance        | internal, timestamp with time zone, smallint, oid, internal                                   | INVOKER          |
+| gbt_uuid_compress        | internal                                                                                      | INVOKER          |
+| gbt_uuid_consistent      | internal, uuid, smallint, oid, internal                                                       | INVOKER          |
+| gbt_uuid_fetch           | internal                                                                                      | INVOKER          |
+| gbt_uuid_penalty         | internal, internal, internal                                                                  | INVOKER          |
+| gbt_uuid_picksplit       | internal, internal                                                                            | INVOKER          |
+| gbt_uuid_same            | gbtreekey32, gbtreekey32, internal                                                            | INVOKER          |
+| gbt_uuid_union           | internal, internal                                                                            | INVOKER          |
+| gbt_var_decompress       | internal                                                                                      | INVOKER          |
+| gbt_var_fetch            | internal                                                                                      | INVOKER          |
+| gbtreekey16_in           | cstring                                                                                       | INVOKER          |
+| gbtreekey16_out          | gbtreekey16                                                                                   | INVOKER          |
+| gbtreekey2_in            | cstring                                                                                       | INVOKER          |
+| gbtreekey2_out           | gbtreekey2                                                                                    | INVOKER          |
+| gbtreekey32_in           | cstring                                                                                       | INVOKER          |
+| gbtreekey32_out          | gbtreekey32                                                                                   | INVOKER          |
+| gbtreekey4_in            | cstring                                                                                       | INVOKER          |
+| gbtreekey4_out           | gbtreekey4                                                                                    | INVOKER          |
+| gbtreekey8_in            | cstring                                                                                       | INVOKER          |
+| gbtreekey8_out           | gbtreekey8                                                                                    | INVOKER          |
+| gbtreekey_var_in         | cstring                                                                                       | INVOKER          |
+| gbtreekey_var_out        | gbtreekey_var                                                                                 | INVOKER          |
+| int2_dist                | smallint, smallint                                                                            | INVOKER          |
+| int4_dist                | integer, integer                                                                              | INVOKER          |
+| int8_dist                | bigint, bigint                                                                                | INVOKER          |
+| interval_dist            | interval, interval                                                                            | INVOKER          |
+| is_club_admin_of         | p_club_id bigint                                                                              | SECURITY DEFINER |
+| mark_attendance          | p_registration_id bigint, p_present boolean                                                   | SECURITY DEFINER |
+| oid_dist                 | oid, oid                                                                                      | INVOKER          |
+| register_for_event       | p_event_id bigint                                                                             | SECURITY DEFINER |
+| register_student         | p_email text, p_hash text, p_name text, p_srn text, p_dept text, p_year integer, p_phone text | SECURITY DEFINER |
+| reopen_event             | p_event_id bigint                                                                             | SECURITY DEFINER |
+| review_event             | p_event_id bigint, p_approve boolean, p_comment text DEFAULT NULL::text                       | SECURITY DEFINER |
+| seats_taken              | p_event_id bigint                                                                             | SECURITY DEFINER |
+| session_check            | p_user_id bigint                                                                              | SECURITY DEFINER |
+| submit_event             | p_event_id bigint                                                                             | SECURITY DEFINER |
+| time_dist                | time without time zone, time without time zone                                                | INVOKER          |
+| trg_attendance_guard     |                                                                                               | SECURITY DEFINER |
+| trg_events_history       |                                                                                               | SECURITY DEFINER |
+| trg_events_notify        |                                                                                               | SECURITY DEFINER |
+| trg_events_validate      |                                                                                               | SECURITY DEFINER |
+| trg_registrations_guard  |                                                                                               | SECURITY DEFINER |
+| trg_registrations_notify |                                                                                               | SECURITY DEFINER |
+| ts_dist                  | timestamp without time zone, timestamp without time zone                                      | INVOKER          |
+| tstz_dist                | timestamp with time zone, timestamp with time zone                                            | INVOKER          |
++--------------------------+-----------------------------------------------------------------------------------------------+------------------+
+(214 rows)
+
++---------------+----------------------+--------+--------+
+|  table_name   |     trigger_name     | event  | timing |
++---------------+----------------------+--------+--------+
+| attendance    | attendance_guard     | UPDATE | BEFORE |
+| attendance    | attendance_guard     | INSERT | BEFORE |
+| events        | events_history       | INSERT | AFTER  |
+| events        | events_history       | UPDATE | AFTER  |
+| events        | events_notify        | UPDATE | AFTER  |
+| events        | events_validate      | INSERT | BEFORE |
+| events        | events_validate      | UPDATE | BEFORE |
+| registrations | registrations_guard  | UPDATE | BEFORE |
+| registrations | registrations_guard  | INSERT | BEFORE |
+| registrations | registrations_notify | INSERT | AFTER  |
+| registrations | registrations_notify | UPDATE | AFTER  |
++---------------+----------------------+--------+--------+
+(11 rows)
+
+== F2 Function demo: register_for_event checks role, deadline, eligibility, capacity and duplicates, and locks the event row
+-- two students compete for the LAST seat of "Last Seat Demo Workshop" (1 seat left in the seed data)
+BEGIN
++------------+
+| set_config |
++------------+
+| 10         |
++------------+
+(1 row)
+
+SET
++-----------+-----------+
+|    who    |  status   |
++-----------+-----------+
+| student A | CONFIRMED |
++-----------+-----------+
+(1 row)
+
++--------------------+
+| seats_left_after_a |
++--------------------+
+|                  0 |
++--------------------+
+(1 row)
+
+RESET
++------------+
+| set_config |
++------------+
+| 11         |
++------------+
+(1 row)
+
+SET
+psql:04_advanced.sql:22: ERROR:  event is full
+CONTEXT:  PL/pgSQL function cc_fail(text,text) line 3 at RAISE
+SQL statement "SELECT cc_fail('CC409', 'event is full')"
+PL/pgSQL function register_for_event(bigint) line 12 at PERFORM
+ROLLBACK
+-- the same student registering twice for an open event
+BEGIN
++------------+
+| set_config |
++------------+
+| 11         |
++------------+
+(1 row)
+
+SET
++-----------+
+|  status   |
++-----------+
+| CONFIRMED |
++-----------+
+(1 row)
+
+psql:04_advanced.sql:29: ERROR:  you already have a registration for this event
+CONTEXT:  PL/pgSQL function cc_fail(text,text) line 3 at RAISE
+SQL statement "SELECT cc_fail('CC409', 'you already have a registration for this event')"
+PL/pgSQL function register_for_event(bigint) line 20 at PERFORM
+ROLLBACK
+-- a registration whose deadline has passed, and a campus admin trying to register
+BEGIN
++------------+
+| set_config |
++------------+
+| 10         |
++------------+
+(1 row)
+
+SET
+psql:04_advanced.sql:33: ERROR:  registration deadline has passed
+CONTEXT:  PL/pgSQL function cc_fail(text,text) line 3 at RAISE
+SQL statement "SELECT cc_fail('CC409', 'registration deadline has passed')"
+PL/pgSQL function register_for_event(bigint) line 7 at PERFORM
+ROLLBACK
+BEGIN
++------------+
+| set_config |
++------------+
+| 1          |
++------------+
+(1 row)
+
+SET
+psql:04_advanced.sql:35: ERROR:  permission denied for function register_for_event
+ROLLBACK
+== F3 Trigger demo: registering automatically creates a notification for the student (trigger trg_registrations_notify)
+BEGIN
++----------------------+
+| notifications_before |
++----------------------+
+|                  234 |
++----------------------+
+(1 row)
+
++------------+
+| set_config |
++------------+
+| 13         |
++------------+
+(1 row)
+
+SET
++-----------+
+|  status   |
++-----------+
+| CONFIRMED |
++-----------+
+(1 row)
+
+RESET
++---------------------+
+| notifications_after |
++---------------------+
+|                 235 |
++---------------------+
+(1 row)
+
++---------+------------------------+----------------------------------------------------------+
+|  role   |          type          |                         message                          |
++---------+------------------------+----------------------------------------------------------+
+| STUDENT | REGISTRATION_CONFIRMED | You are confirmed for "Portrait Photography Masterclass" |
++---------+------------------------+----------------------------------------------------------+
+(1 row)
+
+ROLLBACK
+== F4 Trigger demo: illegal status change is blocked (APPROVED -> DRAFT) and the status history table records legal ones
+BEGIN
+psql:04_advanced.sql:50: ERROR:  illegal event status change APPROVED -> DRAFT
+CONTEXT:  PL/pgSQL function cc_fail(text,text) line 3 at RAISE
+SQL statement "SELECT cc_fail('CC409', format('illegal event status change %s -> %s', OLD.status, NEW.status))"
+PL/pgSQL function trg_events_validate() line 20 at PERFORM
+ROLLBACK
++-----------------+------------------+------------------+-------------------------------+
+|      title      |    old_status    |    new_status    |          changed_at           |
++-----------------+------------------+------------------+-------------------------------+
+| Battle of Bands |                  | DRAFT            | 2026-10-25 02:50:19.880481+00 |
+| Battle of Bands | DRAFT            | PENDING_APPROVAL | 2026-10-25 02:50:19.88164+00  |
+| Battle of Bands | PENDING_APPROVAL | APPROVED         | 2026-10-25 02:50:19.882645+00 |
++-----------------+------------------+------------------+-------------------------------+
+(3 rows)
+
+== F5 Exclusion constraint: two APPROVED events cannot overlap in one venue (the database refuses the approval; the API reports it as HTTP 409)
+BEGIN
+INSERT 0 1
+UPDATE 1
+Approve the overlapping event through the real function as campus admin:
++------------+
+| set_config |
++------------+
+| 1          |
++------------+
+(1 row)
+
+SET
+psql:04_advanced.sql:62: ERROR:  conflicting key value violates exclusion constraint "events_no_venue_overlap"
+DETAIL:  Key (venue_id, tstzrange(start_time, end_time, '[)'::text))=(2, ["2026-11-01 06:00:00+00","2026-11-01 08:00:00+00")) conflicts with existing key (venue_id, tstzrange(start_time, end_time, '[)'::text))=(2, ["2026-11-01 05:30:00+00","2026-11-01 07:30:00+00")).
+CONTEXT:  SQL statement "UPDATE events
+     SET status = CASE WHEN p_approve THEN 'APPROVED' ELSE 'REJECTED' END,
+         reviewed_by = app_user_id(), reviewed_at = now(), review_comment = nullif(trim(coalesce(p_comment, '')), '')
+   WHERE event_id = p_event_id RETURNING *"
+PL/pgSQL function review_event(bigint,boolean,text) line 11 at SQL statement
+ROLLBACK
+== F6 Row-level lock: how the last-seat race is made safe (FOR UPDATE on the event row)
++---------------------------------------------------------------------------------------------------------------------------------+
+|                                                       pg_get_functiondef                                                        |
++---------------------------------------------------------------------------------------------------------------------------------+
+| CREATE OR REPLACE FUNCTION public.register_for_event(p_event_id bigint)                                                        +|
+|  RETURNS registrations                                                                                                         +|
+|  LANGUAGE plpgsql                                                                                                              +|
+|  SECURITY DEFINER                                                                                                              +|
+|  SET search_path TO 'public', 'pg_temp'                                                                                        +|
+| AS $function$                                                                                                                  +|
+| DECLARE uid BIGINT := app_user_id(); e events%ROWTYPE; reg registrations;                                                      +|
+| BEGIN                                                                                                                          +|
+|   IF app_role() IS DISTINCT FROM 'STUDENT' THEN PERFORM cc_fail('CC403', 'only students can register for events'); END IF;     +|
+|   SELECT * INTO e FROM events WHERE event_id = p_event_id FOR UPDATE;                                                          +|
+|   IF NOT FOUND OR e.status <> 'APPROVED' THEN PERFORM cc_fail('CC404', 'event not found or not open for registration'); END IF;+|
+|   IF now() > e.registration_deadline THEN PERFORM cc_fail('CC409', 'registration deadline has passed'); END IF;                +|
+|   IF e.eligibility = 'CLUB_MEMBERS' AND NOT EXISTS                                                                             +|
+|      (SELECT 1 FROM club_members WHERE club_id = e.club_id AND student_id = uid) THEN                                          +|
+|     PERFORM cc_fail('CC403', 'this event is open to club members only');                                                       +|
+|   END IF;                                                                                                                      +|
+|   IF seats_taken(p_event_id) >= e.capacity THEN PERFORM cc_fail('CC409', 'event is full'); END IF;                             +|
+|                                                                                                                                +|
+|   INSERT INTO registrations (event_id, student_id, status)                                                                     +|
+|   VALUES (p_event_id, uid, CASE WHEN e.manual_approval THEN 'PENDING' ELSE 'CONFIRMED' END)                                    +|
+|   ON CONFLICT (event_id, student_id) DO UPDATE                                                                                 +|
+|      SET status = EXCLUDED.status, registered_at = now(), cancelled_at = NULL, decided_by = NULL, decided_at = NULL            +|
+|      WHERE registrations.status = 'CANCELLED'                                                                                  +|
+|   RETURNING * INTO reg;                                                                                                        +|
+|   IF NOT FOUND THEN PERFORM cc_fail('CC409', 'you already have a registration for this event'); END IF;                        +|
+|   RETURN reg;                                                                                                                  +|
+| END $function$                                                                                                                 +|
+|                                                                                                                                 |
++---------------------------------------------------------------------------------------------------------------------------------+
+(1 row)
+
+== F7 Index usage (EXPLAIN) -- seq scan is expected on tiny tables; the planner picks the index once data grows.
+SET
++--------------------------------------------------------------------+
+|                             QUERY PLAN                             |
++--------------------------------------------------------------------+
+| Bitmap Heap Scan on events                                         |
+|   Recheck Cond: (search_vector @@ '''photograph'':*'::tsquery)     |
+|   ->  Bitmap Index Scan on idx_events_search                       |
+|         Index Cond: (search_vector @@ '''photograph'':*'::tsquery) |
++--------------------------------------------------------------------+
+(4 rows)
+
++----------------------------------------------------------+
+|                        QUERY PLAN                        |
++----------------------------------------------------------+
+| Bitmap Heap Scan on registrations                        |
+|   Recheck Cond: (event_id = 1)                           |
+|   Filter: ((status)::text = 'CONFIRMED'::text)           |
+|   ->  Bitmap Index Scan on registrations_one_per_student |
+|         Index Cond: (event_id = 1)                       |
++----------------------------------------------------------+
+(5 rows)
+
++-----------------------------------------------------+
+|                     QUERY PLAN                      |
++-----------------------------------------------------+
+| Bitmap Heap Scan on events                          |
+|   Recheck Cond: ((status)::text = 'APPROVED'::text) |
+|   Filter: (start_time > now())                      |
+|   ->  Bitmap Index Scan on events_no_venue_overlap  |
++-----------------------------------------------------+
+(4 rows)
+
++--------------------------------------------------------------------------------------------------------------------------+
+|                                                        QUERY PLAN                                                        |
++--------------------------------------------------------------------------------------------------------------------------+
+| Index Scan using events_no_venue_overlap on events                                                                       |
+|   Index Cond: (tstzrange(start_time, end_time, '[)'::text) && tstzrange(now(), (now() + '1 day'::interval), '[)'::text)) |
+|   Filter: (venue_id = 1)                                                                                                 |
++--------------------------------------------------------------------------------------------------------------------------+
+(3 rows)
+
+RESET
+== F8 EXPLAIN ANALYZE of the heaviest report (category roll-up with recursive CTE)
++----------------------------------------------------------------------------------------------------------+
+|                                                QUERY PLAN                                                |
++----------------------------------------------------------------------------------------------------------+
+| GroupAggregate (actual rows=3 loops=1)                                                                   |
+|   Group Key: root.name                                                                                   |
+|   CTE tree                                                                                               |
+|     ->  Recursive Union (actual rows=9 loops=1)                                                          |
+|           ->  Bitmap Heap Scan on event_categories (actual rows=3 loops=1)                               |
+|                 Recheck Cond: (parent_category_id IS NULL)                                               |
+|                 Heap Blocks: exact=1                                                                     |
+|                 ->  Bitmap Index Scan on idx_categories_parent (actual rows=3 loops=1)                   |
+|                       Index Cond: (parent_category_id IS NULL)                                           |
+|           ->  Merge Join (actual rows=2 loops=3)                                                         |
+|                 Merge Cond: (c.parent_category_id = t_1.category_id)                                     |
+|                 ->  Index Scan using idx_categories_parent on event_categories c (actual rows=7 loops=3) |
+|                 ->  Sort (actual rows=3 loops=3)                                                         |
+|                       Sort Key: t_1.category_id                                                          |
+|                       Sort Method: quicksort  Memory: 25kB                                               |
+|                       ->  WorkTable Scan on tree t_1 (actual rows=3 loops=3)                             |
+|   ->  Sort (actual rows=16 loops=1)                                                                      |
+|         Sort Key: root.name, e.event_id                                                                  |
+|         Sort Method: quicksort  Memory: 25kB                                                             |
+|         ->  Hash Join (actual rows=16 loops=1)                                                           |
+|               Hash Cond: (t.root_id = root.category_id)                                                  |
+|               ->  Hash Right Join (actual rows=16 loops=1)                                               |
+|                     Hash Cond: (e.category_id = t.category_id)                                           |
+|                     ->  Seq Scan on events e (actual rows=15 loops=1)                                    |
+|                     ->  Hash (actual rows=9 loops=1)                                                     |
+|                           Buckets: 131072  Batches: 1  Memory Usage: 1025kB                              |
+|                           ->  CTE Scan on tree t (actual rows=9 loops=1)                                 |
+|               ->  Hash (actual rows=9 loops=1)                                                           |
+|                     Buckets: 2048  Batches: 1  Memory Usage: 17kB                                        |
+|                     ->  Seq Scan on event_categories root (actual rows=9 loops=1)                        |
++----------------------------------------------------------------------------------------------------------+
+(30 rows)
+

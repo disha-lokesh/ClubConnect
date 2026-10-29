@@ -1,0 +1,178 @@
+Border style is 2.
+== Q1 INNER JOIN (4 tables): published events with club, category and venue
++----------+----------------------------------+------------------+-----------------+------------------+---------------------+
+| event_id |              title               |       club       |    category     |      venue       |      start_ist      |
++----------+----------------------------------+------------------+-----------------+------------------+---------------------+
+|        1 | Intro to Web Dev Bootcamp        | Coding Club      | Web Development | Seminar Hall A   | 2026-10-05 10:00:00 |
+|        2 | AI/ML Paper Reading Night        | AI/ML Society    | AI/ML           | Lab 101          | 2026-10-13 17:00:00 |
+|        3 | Open Mic Evening                 | Music Club       | Music           | Open Air Theatre | 2026-10-17 18:00:00 |
+|        4 | Sunrise Photo Walk               | Photography Club | Photography     | Open Air Theatre | 2026-10-20 06:00:00 |
+|        5 | Cybersecurity CTF                | Coding Club      | Cybersecurity   | Seminar Hall B   | 2026-10-29 10:00:00 |
+|        6 | Computer Vision Workshop         | AI/ML Society    | Computer Vision | Lab 101          | 2026-10-31 14:00:00 |
+|        7 | Portrait Photography Masterclass | Photography Club | Photography     | Seminar Hall A   | 2026-11-01 11:00:00 |
+|        8 | Last Seat Demo Workshop          | Photography Club | Workshops       | Seminar Hall B   | 2026-11-02 15:00:00 |
++----------+----------------------------------+------------------+-----------------+------------------+---------------------+
+(8 rows)
+
+== Q2 LEFT JOIN: every club with its number of approved events (clubs with none still appear)
++------------------+-----------------+
+|       name       | approved_events |
++------------------+-----------------+
+| Coding Club      |               3 |
+| Photography Club |               3 |
+| AI/ML Society    |               2 |
+| Music Club       |               2 |
++------------------+-----------------+
+(4 rows)
+
+== Q3 GROUP BY + HAVING: events with more than 20 confirmed registrations
++---------------------------+-----------+
+|           title           | confirmed |
++---------------------------+-----------+
+| Open Mic Evening          |        32 |
+| Battle of Bands           |        32 |
+| Intro to Web Dev Bootcamp |        30 |
+| 24-Hour Hackathon         |        26 |
+| AI/ML Paper Reading Night |        22 |
++---------------------------+-----------+
+(5 rows)
+
+== Q4 NESTED (IN subquery): students who attended at least one Technical event (including sub-categories via Q7 idea)
++--------------+
+|  full_name   |
++--------------+
+| Aarav Sharma |
+| Aditya Gupta |
+| Ananya Patel |
+| Anika Iyer   |
+| Arnav Sharma |
+| Dev Reddy    |
+| Diya Iyer    |
+| Harsh Sharma |
+| Isha Iyer    |
+| Kabir Joshi  |
++--------------+
+(10 rows)
+
+== Q5 NESTED (NOT EXISTS): students who never registered for any event
++--------------------------------+
+| students_without_registrations |
++--------------------------------+
+|                              0 |
++--------------------------------+
+(1 row)
+
+== Q6 CORRELATED subquery: events whose fill % beats the average of their own club
++---------------------------+--------------+----------+
+|           title           | fill_percent | club_avg |
++---------------------------+--------------+----------+
+| Cybersecurity CTF         |        100.0 |     55.8 |
+| Last Seat Demo Workshop   |         66.7 |     43.9 |
+| AI/ML Paper Reading Night |         55.0 |     42.5 |
+| Sunrise Photo Walk        |         45.0 |     43.9 |
+| Open Mic Evening          |         16.0 |     14.4 |
++---------------------------+--------------+----------+
+(5 rows)
+
+== Q7 RECURSIVE CTE: the category tree with depth and path
++-----------------------+-------------------------------------+
+|       category        |                path                 |
++-----------------------+-------------------------------------+
+| Cultural              | Cultural                            |
+|    Music              | Cultural > Music                    |
+|    Photography        | Cultural > Photography              |
+| Technical             | Technical                           |
+|    AI/ML              | Technical > AI/ML                   |
+|       Computer Vision | Technical > AI/ML > Computer Vision |
+|    Cybersecurity      | Technical > Cybersecurity           |
+|    Web Development    | Technical > Web Development         |
+| Workshops             | Workshops                           |
++-----------------------+-------------------------------------+
+(9 rows)
+
+== Q8 RECURSIVE CTE: all descendants of "Technical"
++-------------+-----------------+-------+
+| category_id |      name       | depth |
++-------------+-----------------+-------+
+|           1 | Technical       |     0 |
+|           5 | AI/ML           |     1 |
+|           6 | Cybersecurity   |     1 |
+|           4 | Web Development |     1 |
+|           7 | Computer Vision |     2 |
++-------------+-----------------+-------+
+(5 rows)
+
+== Q9 (non-recursive) CTE: attendance rate per club, then rank them
++------------------+-----------+----------+----------------+-----+
+|       club       | confirmed | attended | attendance_pct | rnk |
++------------------+-----------+----------+----------------+-----+
+| AI/ML Society    |        22 |       18 |           81.8 |   1 |
+| Music Club       |        32 |       26 |           81.3 |   2 |
+| Coding Club      |        30 |       24 |           80.0 |   3 |
+| Photography Club |        18 |       14 |           77.8 |   4 |
++------------------+-----------+----------+----------------+-----+
+(4 rows)
+
+== Q10 WINDOW functions: running total of confirmed registrations per event over time, per club
++------------------+----------------------------------+---------------------+-----------+---------------+
+|       club       |              title               |      start_ist      | confirmed | running_total |
++------------------+----------------------------------+---------------------+-----------+---------------+
+| AI/ML Society    | AI/ML Paper Reading Night        | 2026-10-13 17:00:00 |        22 |            22 |
+| AI/ML Society    | Computer Vision Workshop         | 2026-10-31 14:00:00 |         5 |            27 |
+| Coding Club      | Intro to Web Dev Bootcamp        | 2026-10-05 10:00:00 |        30 |            30 |
+| Coding Club      | Cybersecurity CTF                | 2026-10-29 10:00:00 |         6 |            36 |
+| Coding Club      | 24-Hour Hackathon                | 2026-11-03 09:00:00 |        26 |            62 |
+| Music Club       | Open Mic Evening                 | 2026-10-17 18:00:00 |        32 |            32 |
+| Music Club       | Battle of Bands                  | 2026-11-08 17:00:00 |        32 |            64 |
+| Photography Club | Sunrise Photo Walk               | 2026-10-20 06:00:00 |        18 |            18 |
+| Photography Club | Portrait Photography Masterclass | 2026-11-01 11:00:00 |        10 |            28 |
+| Photography Club | Last Seat Demo Workshop          | 2026-11-02 15:00:00 |         2 |            30 |
++------------------+----------------------------------+---------------------+-----------+---------------+
+(10 rows)
+
+== Q11 Set operation: students registered for BOTH Battle of Bands AND Hackathon (INTERSECT)
++------------+
+| student_id |
++------------+
+|          7 |
+|          8 |
+|          9 |
+|         12 |
+|         13 |
+|         14 |
+|         17 |
+|         18 |
+|         19 |
+|         22 |
++------------+
+(10 rows)
+
+== Q12 Full-text search with ranking (GIN index on a generated tsvector)
++----------------------------------+------------+
+|              title               |    rank    |
++----------------------------------+------------+
+| Sunrise Photo Walk               | 0.06079271 |
+| Portrait Photography Masterclass | 0.06079271 |
+| Photography Exhibition           | 0.06079271 |
++----------------------------------+------------+
+(3 rows)
+
+== Q13 Views: the five application views
++----------+---------+---------------------------+--------------+------------------------+----------+-----------+---------+-----------+----------+----------+--------------+
+| event_id | club_id |           title           | event_status |       start_time       | capacity | confirmed | pending | cancelled | rejected | attended | fill_percent |
++----------+---------+---------------------------+--------------+------------------------+----------+-----------+---------+-----------+----------+----------+--------------+
+|        1 |       1 | Intro to Web Dev Bootcamp | APPROVED     | 2026-10-05 04:30:00+00 |       60 |        30 |       0 |         0 |        0 |       24 |         50.0 |
+|        2 |       2 | AI/ML Paper Reading Night | APPROVED     | 2026-10-13 11:30:00+00 |       40 |        22 |       0 |         0 |        0 |       18 |         55.0 |
+|        3 |       3 | Open Mic Evening          | APPROVED     | 2026-10-17 12:30:00+00 |      200 |        32 |       0 |         0 |        0 |       26 |         16.0 |
+|        4 |       4 | Sunrise Photo Walk        | APPROVED     | 2026-10-20 00:30:00+00 |       40 |        18 |       0 |         0 |        0 |       14 |         45.0 |
+|        5 |       1 | Cybersecurity CTF         | APPROVED     | 2026-10-29 04:30:00+00 |        6 |         6 |       0 |         0 |        0 |        0 |        100.0 |
++----------+---------+---------------------------+--------------+------------------------+----------+-----------+---------+-----------+----------+----------+--------------+
+(5 rows)
+
++----------+----------------+---------+----------------------------------+----------+---------+--------------------+------------------+------------------------+------------------------+
+| venue_id |   venue_name   | event_a |             title_a              | status_a | event_b |      title_b       |     status_b     |     overlap_start      |      overlap_end       |
++----------+----------------+---------+----------------------------------+----------+---------+--------------------+------------------+------------------------+------------------------+
+|        2 | Seminar Hall A |       7 | Portrait Photography Masterclass | APPROVED |      11 | Rust for Beginners | PENDING_APPROVAL | 2026-11-01 06:30:00+00 | 2026-11-01 07:30:00+00 |
++----------+----------------+---------+----------------------------------+----------+---------+--------------------+------------------+------------------------+------------------------+
+(1 row)
+

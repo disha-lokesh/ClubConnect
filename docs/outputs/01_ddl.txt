@@ -1,0 +1,199 @@
+== 1. Describe the real tables (constraints visible)
+                                                                                                          Table "public.events"
+        Column         |           Type           | Collation | Nullable |                                                                            Default                                                                             
+-----------------------+--------------------------+-----------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ event_id              | bigint                   |           | not null | generated always as identity
+ club_id               | bigint                   |           | not null | 
+ category_id           | bigint                   |           | not null | 
+ venue_id              | bigint                   |           | not null | 
+ title                 | character varying(150)   |           | not null | 
+ description           | text                     |           | not null | ''::text
+ start_time            | timestamp with time zone |           | not null | 
+ end_time              | timestamp with time zone |           | not null | 
+ registration_deadline | timestamp with time zone |           | not null | 
+ capacity              | integer                  |           | not null | 
+ fee                   | numeric(8,2)             |           | not null | 0
+ eligibility           | character varying(20)    |           | not null | 'OPEN'::character varying
+ manual_approval       | boolean                  |           | not null | false
+ status                | character varying(20)    |           | not null | 'DRAFT'::character varying
+ created_by            | bigint                   |           | not null | 
+ submitted_at          | timestamp with time zone |           |          | 
+ reviewed_by           | bigint                   |           |          | 
+ reviewed_at           | timestamp with time zone |           |          | 
+ review_comment        | text                     |           |          | 
+ cancel_reason         | text                     |           |          | 
+ created_at            | timestamp with time zone |           | not null | now()
+ updated_at            | timestamp with time zone |           | not null | now()
+ search_vector         | tsvector                 |           |          | generated always as (to_tsvector('english'::regconfig, (COALESCE(title, ''::character varying)::text || ' '::text) || COALESCE(description, ''::text))) stored
+Indexes:
+    "events_pkey" PRIMARY KEY, btree (event_id)
+    "events_no_venue_overlap" EXCLUDE USING gist (venue_id WITH =, tstzrange(start_time, end_time, '[)'::text) WITH &&) WHERE (status::text = 'APPROVED'::text)
+    "idx_events_category" btree (category_id)
+    "idx_events_club" btree (club_id, status)
+    "idx_events_search" gin (search_vector)
+    "idx_events_status_start" btree (status, start_time)
+    "idx_events_venue_start" btree (venue_id, start_time)
+Check constraints:
+    "events_capacity_check" CHECK (capacity > 0)
+    "events_deadline" CHECK (registration_deadline <= start_time)
+    "events_eligibility_check" CHECK (eligibility::text = ANY (ARRAY['OPEN'::character varying, 'CLUB_MEMBERS'::character varying]::text[]))
+    "events_fee_check" CHECK (fee >= 0::numeric)
+    "events_reject_reason" CHECK (status::text <> 'REJECTED'::text OR length(TRIM(BOTH FROM COALESCE(review_comment, ''::text))) > 0)
+    "events_status_check" CHECK (status::text = ANY (ARRAY['DRAFT'::character varying, 'PENDING_APPROVAL'::character varying, 'APPROVED'::character varying, 'REJECTED'::character varying, 'CANCELLED'::character varying]::text[]))
+    "events_time_order" CHECK (end_time > start_time)
+    "events_title_check" CHECK (length(TRIM(BOTH FROM title)) > 0)
+Foreign-key constraints:
+    "events_category_id_fkey" FOREIGN KEY (category_id) REFERENCES event_categories(category_id)
+    "events_club_id_fkey" FOREIGN KEY (club_id) REFERENCES clubs(club_id)
+    "events_created_by_fkey" FOREIGN KEY (created_by) REFERENCES users(user_id)
+    "events_reviewed_by_fkey" FOREIGN KEY (reviewed_by) REFERENCES users(user_id)
+    "events_venue_id_fkey" FOREIGN KEY (venue_id) REFERENCES venues(venue_id)
+Referenced by:
+    TABLE "event_status_history" CONSTRAINT "event_status_history_event_id_fkey" FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE
+    TABLE "notifications" CONSTRAINT "notifications_event_id_fkey" FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE
+    TABLE "registrations" CONSTRAINT "registrations_event_id_fkey" FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE RESTRICT
+Policies:
+    POLICY "events_campus_sel" FOR SELECT
+      TO app_campus_admin
+      USING (((status)::text <> 'DRAFT'::text))
+    POLICY "events_club_ins" FOR INSERT
+      TO app_club_admin
+      WITH CHECK ((is_club_admin_of(club_id) AND (created_by = app_user_id())))
+    POLICY "events_club_sel" FOR SELECT
+      TO app_club_admin
+      USING ((((status)::text = 'APPROVED'::text) OR is_club_admin_of(club_id)))
+    POLICY "events_club_upd" FOR UPDATE
+      TO app_club_admin
+      USING (is_club_admin_of(club_id))
+      WITH CHECK (is_club_admin_of(club_id))
+    POLICY "events_student_sel" FOR SELECT
+      TO app_student
+      USING ((((status)::text = 'APPROVED'::text) OR (((status)::text = 'CANCELLED'::text) AND (EXISTS ( SELECT 1
+   FROM registrations r
+  WHERE ((r.event_id = events.event_id) AND (r.student_id = app_user_id())))))))
+Triggers:
+    events_history AFTER INSERT OR UPDATE ON events FOR EACH ROW EXECUTE FUNCTION trg_events_history()
+    events_notify AFTER UPDATE OF status ON events FOR EACH ROW WHEN (old.status::text IS DISTINCT FROM new.status::text) EXECUTE FUNCTION trg_events_notify()
+    events_validate BEFORE INSERT OR UPDATE ON events FOR EACH ROW EXECUTE FUNCTION trg_events_validate()
+
+                                   Table "public.registrations"
+     Column      |           Type           | Collation | Nullable |           Default            
+-----------------+--------------------------+-----------+----------+------------------------------
+ registration_id | bigint                   |           | not null | generated always as identity
+ event_id        | bigint                   |           | not null | 
+ student_id      | bigint                   |           | not null | 
+ status          | character varying(20)    |           | not null | 'PENDING'::character varying
+ registered_at   | timestamp with time zone |           | not null | now()
+ decided_by      | bigint                   |           |          | 
+ decided_at      | timestamp with time zone |           |          | 
+ cancelled_at    | timestamp with time zone |           |          | 
+Indexes:
+    "registrations_pkey" PRIMARY KEY, btree (registration_id)
+    "idx_reg_event_status" btree (event_id, status)
+    "idx_reg_student" btree (student_id, status)
+    "registrations_one_per_student" UNIQUE CONSTRAINT, btree (event_id, student_id)
+Check constraints:
+    "registrations_status_check" CHECK (status::text = ANY (ARRAY['PENDING'::character varying, 'CONFIRMED'::character varying, 'REJECTED'::character varying, 'CANCELLED'::character varying]::text[]))
+Foreign-key constraints:
+    "registrations_decided_by_fkey" FOREIGN KEY (decided_by) REFERENCES users(user_id)
+    "registrations_event_id_fkey" FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE RESTRICT
+    "registrations_student_id_fkey" FOREIGN KEY (student_id) REFERENCES students(user_id) ON DELETE RESTRICT
+Referenced by:
+    TABLE "attendance" CONSTRAINT "attendance_registration_id_fkey" FOREIGN KEY (registration_id) REFERENCES registrations(registration_id) ON DELETE CASCADE
+Policies:
+    POLICY "reg_campus" FOR SELECT
+      TO app_campus_admin
+      USING (true)
+    POLICY "reg_club" FOR SELECT
+      TO app_club_admin
+      USING ((EXISTS ( SELECT 1
+   FROM events e
+  WHERE ((e.event_id = registrations.event_id) AND is_club_admin_of(e.club_id)))))
+    POLICY "reg_student" FOR SELECT
+      TO app_student
+      USING ((student_id = app_user_id()))
+Triggers:
+    registrations_guard BEFORE INSERT OR UPDATE ON registrations FOR EACH ROW EXECUTE FUNCTION trg_registrations_guard()
+    registrations_notify AFTER INSERT OR UPDATE OF status ON registrations FOR EACH ROW EXECUTE FUNCTION trg_registrations_notify()
+
+== 2. CREATE a disposable table with PK, UNIQUE, CHECK, FK, DEFAULT
+psql:01_ddl.sql:9: NOTICE:  table "demo_scratch" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+                               Table "public.demo_scratch"
+ Column  |           Type           | Collation | Nullable |           Default            
+---------+--------------------------+-----------+----------+------------------------------
+ id      | integer                  |           | not null | generated always as identity
+ club_id | bigint                   |           | not null | 
+ label   | character varying(30)    |           | not null | 
+ seats   | integer                  |           | not null | 10
+ created | timestamp with time zone |           | not null | now()
+Indexes:
+    "demo_scratch_pkey" PRIMARY KEY, btree (id)
+    "demo_scratch_label_key" UNIQUE CONSTRAINT, btree (label)
+Check constraints:
+    "demo_scratch_seats_check" CHECK (seats >= 1 AND seats <= 500)
+Foreign-key constraints:
+    "demo_scratch_club_id_fkey" FOREIGN KEY (club_id) REFERENCES clubs(club_id) ON DELETE RESTRICT
+
+== 3. ALTER: add a column, add a named constraint, change a default, rename
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+                               Table "public.demo_scratch"
+ Column  |           Type           | Collation | Nullable |           Default            
+---------+--------------------------+-----------+----------+------------------------------
+ id      | integer                  |           | not null | generated always as identity
+ club_id | bigint                   |           | not null | 
+ label   | character varying(30)    |           | not null | 
+ seats   | integer                  |           | not null | 25
+ created | timestamp with time zone |           | not null | now()
+ remark  | text                     |           |          | 
+Indexes:
+    "demo_scratch_pkey" PRIMARY KEY, btree (id)
+    "demo_scratch_label_key" UNIQUE CONSTRAINT, btree (label)
+Check constraints:
+    "demo_label_not_blank" CHECK (length(TRIM(BOTH FROM label)) > 0)
+    "demo_scratch_seats_check" CHECK (seats >= 1 AND seats <= 500)
+Foreign-key constraints:
+    "demo_scratch_club_id_fkey" FOREIGN KEY (club_id) REFERENCES clubs(club_id) ON DELETE RESTRICT
+
+== 4. Constraints in action: each statement below MUST fail
+INSERT 0 1
+psql:01_ddl.sql:28: ERROR:  duplicate key value violates unique constraint "demo_scratch_label_key"
+DETAIL:  Key (label)=(ok-row) already exists.
+psql:01_ddl.sql:29: ERROR:  new row for relation "demo_scratch" violates check constraint "demo_scratch_seats_check"
+DETAIL:  Failing row contains (3, 1, big, 9999, 2026-10-25 02:50:20.503701+00, null).
+psql:01_ddl.sql:30: ERROR:  insert or update on table "demo_scratch" violates foreign key constraint "demo_scratch_club_id_fkey"
+DETAIL:  Key (club_id)=(99999) is not present in table "clubs".
+psql:01_ddl.sql:31: ERROR:  new row for relation "demo_scratch" violates check constraint "demo_label_not_blank"
+DETAIL:  Failing row contains (5, 1,    , 5, 2026-10-25 02:50:20.504161+00, null).
+psql:01_ddl.sql:32: ERROR:  null value in column "label" of relation "demo_scratch" violates not-null constraint
+DETAIL:  Failing row contains (6, 1, null, 25, 2026-10-25 02:50:20.504334+00, null).
+psql:01_ddl.sql:33: ERROR:  update or delete on table "clubs" violates foreign key constraint "events_club_id_fkey" on table "events"
+DETAIL:  Key (club_id)=(1) is still referenced from table "events".
+== 5. Real-table constraints: each must fail
+psql:01_ddl.sql:36: ERROR:  new row for relation "users" violates check constraint "users_email_format"
+DETAIL:  Failing row contains (45, not-an-email, x, Bad Email, STUDENT, t, 2026-10-25 02:50:20.505818+00).
+psql:01_ddl.sql:37: ERROR:  new row for relation "users" violates check constraint "users_role_check"
+DETAIL:  Failing row contains (46, x@y.com, x, Bad Role, SUPERUSER, t, 2026-10-25 02:50:20.506417+00).
+psql:01_ddl.sql:40: ERROR:  new row for relation "events" violates check constraint "events_time_order"
+DETAIL:  Failing row contains (16, 1, 4, 2, bad times, , 2026-10-05 04:30:00+00, 2026-10-05 03:30:00+00, 2026-10-05 04:30:00+00, 10, 0.00, OPEN, f, DRAFT, 2, null, null, null, null, null, 2026-10-25 02:50:20.506641+00, 2026-10-25 02:50:20.506641+00, 'bad':1 'time':2).
+psql:01_ddl.sql:42: ERROR:  new row for relation "events" violates check constraint "events_deadline"
+DETAIL:  Failing row contains (17, 1, 4, 2, bad deadline, , 2026-10-05 04:30:00+00, 2026-10-05 07:30:00+00, 2026-10-06 04:30:00+00, 10, 0.00, OPEN, f, DRAFT, 2, null, null, null, null, null, 2026-10-25 02:50:20.509162+00, 2026-10-25 02:50:20.509162+00, 'bad':1 'deadlin':2).
+psql:01_ddl.sql:44: ERROR:  new row for relation "events" violates check constraint "events_capacity_check"
+DETAIL:  Failing row contains (18, 1, 4, 2, zero capacity, , 2026-10-05 04:30:00+00, 2026-10-05 07:30:00+00, 2026-10-05 04:30:00+00, 0, 0.00, OPEN, f, DRAFT, 2, null, null, null, null, null, 2026-10-25 02:50:20.509693+00, 2026-10-25 02:50:20.509693+00, 'capac':2 'zero':1).
+psql:01_ddl.sql:45: ERROR:  event capacity 9999 exceeds venue capacity 80
+CONTEXT:  PL/pgSQL function cc_fail(text,text) line 3 at RAISE
+SQL statement "SELECT cc_fail('CC422', format('event capacity %s exceeds venue capacity %s', NEW.capacity, v.capacity))"
+PL/pgSQL function trg_events_validate() line 9 at PERFORM
+psql:01_ddl.sql:46: ERROR:  insert or update on table "students" violates foreign key constraint "students_user_id_role_fkey"
+DETAIL:  Key (user_id, role)=(1, STUDENT) is not present in table "users".
+== 6. DROP the disposable objects (controlled)
+DROP TABLE
+ demo_scratch_exists_after_drop 
+--------------------------------
+ 
+(1 row)
+

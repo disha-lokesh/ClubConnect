@@ -1,0 +1,38 @@
+{
+  "name": "clubconnect",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ClubConnect: Club Event Management & Registration System (DBMS Level 3 mini project)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:seed": "node scripts/seed.mjs",
+    "db:setup": "node scripts/migrate.mjs && node scripts/seed.mjs && node scripts/mongo-init.mjs && node scripts/mongo-seed.mjs",
+    "mongo:init": "node scripts/mongo-init.mjs",
+    "test:db": "node scripts/test-db.mjs",
+    "test:mongo": "node scripts/test-mongo.mjs",
+    "test:api": "node scripts/test-api.mjs",
+    "mongo:seed": "node scripts/mongo-seed.mjs"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.13",
+    "mongodb": "^7.7.0",
+    "next": "^16.4.2",
+    "pg": "^8.23.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "mingo": "^7.2.5",
+    "typescript": "^5.9.3"
+  },
+  "type": "module"
+}
