@@ -50,7 +50,7 @@ async function test(id, name, fn) {
 // ---- fixtures ------------------------------------------------------------------------------------------
 const admin = await uidOf('admin@pes.edu');
 const coding = await uidOf('acmw@pes.edu');
-const music = await uidOf('mcop@pes.edu');
+const music = await uidOf('chords@pes.edu');
 const photo = await uidOf('pixels@pes.edu');
 const studs = (await q(`SELECT user_id FROM users WHERE role='STUDENT' ORDER BY user_id`)).map(r => r.user_id);
 const E = {

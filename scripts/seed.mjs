@@ -2,7 +2,7 @@
 // so the calendar always has past, ongoing-soon and upcoming events.
 //   node scripts/seed.mjs            seed an empty database
 //   node scripts/seed.mjs --reset    wipe all application data first
-// Club admin demo passwords match their club name (acmw123, mcop123, pixels123).
+// Club admin demo passwords: acm123, chords123 and pixels123.
 import bcrypt from 'bcryptjs';
 import pg from 'pg';
 import { loadEnv } from './env.mjs';
@@ -26,8 +26,8 @@ const hash = async password => bcrypt.hash(password || 'Password@123', 10);
 // ---------------------------------------------------------------- staff accounts
 const staff = [
   ['admin@pes.edu',        'Dr. Meera Rao',   'CAMPUS_ADMIN'],
-  ['acmw@pes.edu',         'Arjun Nair',      'CLUB_ADMIN', 'acmw123'],
-  ['mcop@pes.edu',         'Kavya Menon',     'CLUB_ADMIN', 'mcop123'],
+  ['acmw@pes.edu',        'Arjun Nair',      'CLUB_ADMIN', 'acm123'],
+  ['chords@pes.edu',      'Kavya Menon',     'CLUB_ADMIN', 'chords123'],
   ['pixels@pes.edu',       'Rohan Das',       'CLUB_ADMIN', 'pixels123'],
 ];
 const uid = {};
@@ -40,11 +40,11 @@ for (const [email, name, role, password] of staff) {
 const clubs = {};
 for (const [name, desc, mail] of [
  ['ACMW',               'Technology workshops, hackathons and web development.', 'acmw@pes.edu'],
- ['MCOP',               'Bands, open mics and music production.', 'mcop@pes.edu'],
+ ['MCOP',               'Bands, open mics and music production.', 'chords@pes.edu'],
  ['Pixels',             'Photo walks, exhibitions and masterclasses.', 'pixels@pes.edu'],
 ]) clubs[name] = (await q('INSERT INTO clubs(name,description,contact_email) VALUES ($1,$2,$3) RETURNING club_id', [name, desc, mail])).rows[0].club_id;
 
-for (const [email, club] of [['acmw@pes.edu','ACMW'], ['mcop@pes.edu','MCOP'], ['pixels@pes.edu','Pixels']])
+for (const [email, club] of [['acmw@pes.edu','ACMW'], ['chords@pes.edu','MCOP'], ['pixels@pes.edu','Pixels']])
   await q('INSERT INTO club_admins(club_id,user_id) VALUES ($1,$2)', [clubs[club], uid[email]]);
 
 const venues = {};
@@ -83,19 +83,19 @@ for (const [club, pred] of [['ACMW', i => i % 2 === 0], ['MCOP', i => i % 4 === 
 const E = [
   ['Intro to Web Dev Bootcamp',        'ACMW',   'Web Development', 'Seminar Hall A',  -20, 10, 3, 60, 0,   'OPEN',         false, 'APPROVED', 'acmw@pes.edu', 30, 'Hands-on HTML, CSS and JavaScript for beginners.'],
   ['AI/ML Paper Reading Night',        'ACMW',   'AI/ML',           'Lab 101',         -12, 17, 2, 40, 0,   'OPEN',         true,  'APPROVED', 'acmw@pes.edu', 22, 'We read and discuss a recent machine learning paper together.'],
-  ['Open Mic Evening',                 'MCOP',   'Music',           'Open Air Theatre', -8, 18, 3, 200, 50, 'OPEN',         false, 'APPROVED', 'mcop@pes.edu',  38, 'Sing, play or just listen: an open stage for everyone.'],
+  ['Open Mic Evening',                 'MCOP',   'Music',           'Open Air Theatre', -8, 18, 3, 200, 50, 'OPEN',         false, 'APPROVED', 'chords@pes.edu',  38, 'Sing, play or just listen: an open stage for everyone.'],
   ['Sunrise Photo Walk',               'Pixels', 'Photography',     'Open Air Theatre', -5, 6,  2, 40, 0,   'OPEN',         false, 'APPROVED', 'pixels@pes.edu', 18, 'Golden-hour photography around the campus.'],
   ['Cybersecurity CTF',                'ACMW',   'Cybersecurity',   'Seminar Hall B',   4, 10, 6, 6,  0,   'OPEN',         false, 'APPROVED', 'acmw@pes.edu', 6,  'Capture-the-flag challenges. Capacity is tiny on purpose: this event is FULL.'],
   ['Computer Vision Workshop',         'ACMW',   'Computer Vision', 'Lab 101',          6, 14, 3, 30, 0,   'CLUB_MEMBERS', true,  'APPROVED', 'acmw@pes.edu', 9,  'Object detection with Python. Members only; each registration is approved by the club.'],
   ['Portrait Photography Masterclass', 'Pixels', 'Photography',     'Seminar Hall A',   7, 11, 2, 50, 150, 'OPEN',         false, 'APPROVED', 'pixels@pes.edu', 10, 'Lighting and composition for portraits.'],
   ['Last Seat Demo Workshop',          'Pixels', 'Workshops',       'Seminar Hall B',   8, 15, 2, 3,  0,   'OPEN',         false, 'APPROVED', 'pixels@pes.edu', 2,  'Only ONE seat left: used to demonstrate concurrent registration.'],
   ['24-Hour Hackathon',                'ACMW',   'Technical',       'Auditorium',       9, 9, 24, 150, 100, 'OPEN',         false, 'APPROVED', 'acmw@pes.edu', 26, 'Build something useful in 24 hours.'],
-  ['Battle of Bands',                  'MCOP',   'Music',           'Auditorium',      14, 17, 4, 250, 75,  'OPEN',         false, 'APPROVED', 'mcop@pes.edu',  40, 'Campus bands compete for the title.'],
+  ['Battle of Bands',                  'MCOP',   'Music',           'Auditorium',      14, 17, 4, 250, 75,  'OPEN',         false, 'APPROVED', 'chords@pes.edu',  40, 'Campus bands compete for the title.'],
   ['Rust for Beginners',               'ACMW',   'Web Development', 'Seminar Hall A',   7, 12, 2, 40, 0,   'OPEN',         false, 'PENDING_APPROVAL', 'acmw@pes.edu', 0, 'Overlaps the Portrait Masterclass in Seminar Hall A: a schedule-conflict demo.'],
-  ['Music Production Workshop',        'MCOP',   'Workshops',       'Lab 101',         20, 14, 3, 30, 200, 'OPEN',         true,  'PENDING_APPROVAL', 'mcop@pes.edu',  0, 'Make a track from scratch with free software.'],
+  ['Music Production Workshop',        'MCOP',   'Workshops',       'Lab 101',         20, 14, 3, 30, 200, 'OPEN',         true,  'PENDING_APPROVAL', 'chords@pes.edu',  0, 'Make a track from scratch with free software.'],
   ['Photography Exhibition',           'Pixels', 'Photography',     'Seminar Hall B',  25, 10, 8, 60, 0,   'OPEN',         false, 'DRAFT',    'pixels@pes.edu',  0, 'Still being planned.'],
-  ['Late Night Concert',               'MCOP',   'Music',           'Open Air Theatre', 11, 22, 3, 300, 0,  'OPEN',         false, 'REJECTED', 'mcop@pes.edu',  0, 'Evening concert.'],
-  ['Rooftop Jam',                      'MCOP',   'Music',           'Seminar Hall B',   5, 18, 2, 30, 0,   'OPEN',         false, 'CANCELLED', 'mcop@pes.edu', 8,  'Cancelled because of rain forecast.'],
+  ['Late Night Concert',               'MCOP',   'Music',           'Open Air Theatre', 11, 22, 3, 300, 0,  'OPEN',         false, 'REJECTED', 'chords@pes.edu',  0, 'Evening concert.'],
+  ['Rooftop Jam',                      'MCOP',   'Music',           'Seminar Hall B',   5, 18, 2, 30, 0,   'OPEN',         false, 'CANCELLED', 'chords@pes.edu', 8,  'Cancelled because of rain forecast.'],
 ];
 const adminId = uid['admin@pes.edu'];
 const eventIds = {};

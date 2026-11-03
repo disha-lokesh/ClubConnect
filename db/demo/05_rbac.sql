@@ -33,7 +33,7 @@ SELECT * FROM club_participants LIMIT 1;
 ROLLBACK;
 
 \echo '== R5 CLUB_ADMIN (Music Club only): sees own drafts/pending, not other clubs'' drafts; cannot approve; cannot touch status directly'
-BEGIN; SELECT set_config('app.user_id', (SELECT user_id::text FROM users WHERE email='ca.music@pes.edu'), true); SET LOCAL ROLE app_club_admin;
+BEGIN; SELECT set_config('app.user_id', (SELECT user_id::text FROM users WHERE email='chords@pes.edu'), true); SET LOCAL ROLE app_club_admin;
 SELECT c.name AS club, e.status, count(*) FROM events e JOIN clubs c USING (club_id) GROUP BY c.name, e.status ORDER BY 1,2;
 UPDATE events SET status = 'APPROVED' WHERE status = 'PENDING_APPROVAL';
 SELECT * FROM review_event((SELECT event_id FROM events WHERE status='PENDING_APPROVAL' LIMIT 1), true, 'x');

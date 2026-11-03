@@ -54,8 +54,8 @@ async function main() {
   if (!health?.ok) { console.error(`App not reachable at ${BASE}. Start it first (npm run build && npm start).`); process.exit(2); }
 
   const student = await loginStu(1);
-  const coding = await login('acmw@pes.edu', 'acmw123');
-  const music = await login('mcop@pes.edu', 'mcop123');
+  const coding = await login('acmw@pes.edu', 'acm123');
+  const music = await login('chords@pes.edu', 'chords123');
   const campus = await login('admin@pes.edu');
   const anon = new Client('anon');
 

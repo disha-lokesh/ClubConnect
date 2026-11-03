@@ -30,7 +30,7 @@ npm run db:setup      # = migrate + seed PostgreSQL + create Mongo collections +
 
 or step by step: `npm run db:migrate`, `npm run db:seed`, `npm run mongo:init`, `npm run mongo:seed`. Re-seed from scratch with `node scripts/seed.mjs --reset`.
 
-Seeded demo accounts (**development only**): `admin@pes.edu` (campus admin), `acmw@pes.edu` / `acmw123`, `mcop@pes.edu` / `mcop123`, `pixels@pes.edu` / `pixels123` (club admins), `aarav.sharma1@stu.pes.edu` (student).
+Seeded demo accounts (**development only**): `admin@pes.edu` (campus admin), `acmw@pes.edu` / `acm123`, `chords@pes.edu` / `chords123`, `pixels@pes.edu` / `pixels123` (club admins), `aarav.sharma1@stu.pes.edu` (student).
 
 ## 4. Run
 
