@@ -13,12 +13,12 @@ export default function LoginPage() {
       </div>
       {dev && (
         <div className="card"><h3>Demo accounts <span className="badge b-warn">development seed only</span></h3>
-          <p className="small muted">Club passwords follow the club name (for example, <code>acmw123</code>).</p>
+          <p className="small muted">Use one of the seeded club administrator accounts below.</p>
           <table className="small"><tbody>
             <tr><td>Campus admin</td><td><code>admin@pes.edu</code></td></tr>
-            <tr><td>Club admin (ACMW)</td><td><code>acmw@pes.edu</code> / <code>acmw123</code></td></tr>
-            <tr><td>Club admin (MCOP)</td><td><code>mcop@pes.edu</code> / <code>mcop123</code></td></tr>
-            <tr><td>Club admin (Pixels)</td><td><code>pixels@pes.edu</code> / <code>pixels123</code></td></tr>
+            <tr><td>Club admin (Coding)</td><td><code>ca.coding@pes.edu</code> / <code>Password@123</code></td></tr>
+            <tr><td>Club admin (Music)</td><td><code>ca.music@pes.edu</code> / <code>Password@123</code></td></tr>
+            <tr><td>Club admin (Photography)</td><td><code>ca.photo@pes.edu</code> / <code>Password@123</code></td></tr>
             <tr><td>Student</td><td><code>aarav.sharma1@stu.pes.edu</code></td></tr>
           </tbody></table></div>)}
     </div></div>
