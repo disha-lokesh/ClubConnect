@@ -4,6 +4,7 @@ import { campusReports } from '@/lib/reports';
 import { aggregationEngine, reportActivityPerDay, reportAnnouncementsPerClub, reportFeedbackByEvent, reportFeedbackTags, reportTopActors } from '@/lib/mongo';
 import DataTable from '@/components/DataTable';
 import { Alert } from '@/components/ui';
+import ReportCharts from '@/components/ReportCharts';
 
 export default async function Reports() {
   const s = await requireRole('CAMPUS_ADMIN');
@@ -13,7 +14,9 @@ export default async function Reports() {
   return (
     <>
       <h1>Reports</h1>
-      <h2>From PostgreSQL</h2>
+      <p className="muted report-intro">A visual overview of campus activity, event demand, and club participation.</p>
+      <ReportCharts participation={sql.clubParticipation} funnel={sql.eventFunnel} activity={m?.perDay ?? []} mongo={m ? { feedback: m.fb, tags: m.tags, activity: m.perDay, announcements: m.ann } : undefined} />
+      <div className="report-section-heading"><div><span className="eyebrow">Detailed data</span><h2>PostgreSQL reports</h2></div><p className="muted">Use these tables when you need the exact records behind the visual summary.</p></div>
       <div className="grid g2">
         <div className="card"><h3>Club participation <span className="small muted">(JOIN, GROUP BY, HAVING)</span></h3><DataTable rows={sql.clubParticipation} cols={{ club: 'Club', events: 'Events', confirmed: 'Confirmed', attended: 'Attended', attendance_rate: 'Attendance %' }} /></div>
         <div className="card"><h3>Category roll-up <span className="small muted">(recursive CTE)</span></h3><DataTable rows={sql.categoryRollup} cols={{ category: 'Top-level category', events: 'Events', confirmed: 'Confirmed' }} /></div>
@@ -22,7 +25,7 @@ export default async function Reports() {
         <div className="card"><h3>Event pipeline</h3><DataTable rows={sql.eventFunnel} cols={{ status: 'Status', events: 'Events' }} /></div>
         <div className="card"><h3>Most active students <span className="small muted">(window function)</span></h3><DataTable rows={sql.topStudents} cols={{ rank: 'Rank', student: 'Student', department: 'Dept', events_attended: 'Attended' }} /></div>
       </div>
-      <h2>From MongoDB <span className="small muted">(aggregation pipelines)</span></h2>
+      <div className="report-section-heading"><div><span className="eyebrow">Engagement data</span><h2>MongoDB reports</h2></div><p className="muted">Feedback, activity, and announcements from the campus activity stream.</p></div>
       {!m ? <Alert kind="warn">MongoDB is not reachable, so these reports are unavailable. PostgreSQL reports above are unaffected.</Alert> : (
         <>
           {m.engine !== 'server' && <Alert kind="info">Compatibility mode: aggregations ran in memory (development database). On a real MongoDB server they run inside the database.</Alert>}
