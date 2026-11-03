@@ -18,7 +18,6 @@ export default function Shell({ s, nav, home, children }: { s: Session; nav: { h
             </summary>
             <div className="popover-card"><strong>Notifications</strong><Link href={notifications.href}>View all notifications</Link></div>
           </details>}
-          {profile && <Link href={profile.href} className="icon-btn" aria-label="Profile" title="Profile"><span aria-hidden="true">●</span></Link>}
           <Link href={profile ? `${profile.href}?section=settings` : home} className="icon-btn" aria-label="Settings" title="Settings"><span aria-hidden="true">⚙</span></Link>
           <span className="small muted user-name">{s.name}</span><LogoutButton />
         </div>
