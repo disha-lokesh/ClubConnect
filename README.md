@@ -7,9 +7,10 @@ ClubConnect replaces the chat groups, spreadsheets and e-mails that student club
 
 | | |
 |---|---|
-| **Team** | Dhriti Kamani - PES1UG24AM085, Disha Lokesh - PES1UG24AM093|
+| **Team** | Dhriti Kamani (PES1UG24AM085), Disha Lokesh (PES1UG24AM093) |
 | **Section** | B |
-| **Faculty** | Smitha GR |
+| **Faculty** | Prof. Smitha |
+| **Repository** | https://github.com/disha-lokesh/ClubConnect |
 
 ---
 
@@ -20,7 +21,7 @@ ClubConnect replaces the chat groups, spreadsheets and e-mails that student club
 3. [Architecture](#3-architecture)
 4. [Database design](#4-database-design)
 5. [Security and role-based access control](#5-security-and-role-based-access-control)
-6. [Screenshots](#6-screenshots)
+6. [Results and screenshots](#6-results-and-screenshots)
 7. [Getting started](#7-getting-started)
 8. [Demo accounts and demo script](#8-demo-accounts-and-demo-script)
 9. [Testing and verification](#9-testing-and-verification)
@@ -102,12 +103,15 @@ There are no distributed transactions: PostgreSQL commits first; events are neve
 
 ### 4.1 PostgreSQL (12 tables)
 
-![ER diagram]<img width="1280" height="747" alt="image" src="https://github.com/user-attachments/assets/deb209ad-0960-420e-810c-9cab84f7a7c9" />
+**Figure 1: ER diagram of ClubConnect** (hand-drawn, Chen notation; the original conceptual design)
 
+![Figure 1: ER diagram of ClubConnect](docs/images/er-diagram.png)
 
-`users`, `students`, `clubs`, `club_admins`, `club_members`, `event_categories` (self-referencing tree), `venues`, `events`, `event_status_history`, `registrations`, `attendance` (weak entity), `notifications`.
+`users`, `students`, `clubs`, `club_admins`, `club_members`, `event_categories` (self-referencing tree), `venues`, `events`, `event_status_history` (weak), `registrations`, `attendance` (weak entity), `notifications`.
 
-![Relational schema](docs/images/relational-schema.png)
+**Relational schema diagram** (PK/FK links between the 12 tables of the final implementation)
+
+![Relational schema diagram](docs/images/relational-schema.png)
 
 Highlights (all in `db/migrations/`):
 
@@ -154,16 +158,59 @@ Proof: `docs/outputs/05_rbac.txt` (SQL run directly as each role) and the RBAC t
 
 ---
 
-## 6. Screenshots
+## 6. Results and screenshots
 
-| | |
-|---|---|
-| ![Login](docs/screenshots/01-login.png) **Login** | ![Student dashboard](docs/screenshots/02-student-dashboard.png) **Student dashboard** |
-| ![Catalogue](docs/screenshots/03-student-catalogue.png) **Event catalogue with filters** | ![Calendar](docs/screenshots/04-student-calendar.png) **Calendar** |
-| ![Registrations](docs/screenshots/05-student-registrations.png) **My registrations** | ![Club dashboard](docs/screenshots/06-club-dashboard.png) **Club admin dashboard** |
-| ![Club events](docs/screenshots/07-club-events.png) **Club events and statuses** | ![New event](docs/screenshots/08-club-new-event.png) **Create event** |
-| ![Campus dashboard](docs/screenshots/09-campus-dashboard.png) **Campus dashboard** | ![Approvals](docs/screenshots/10-campus-approvals.png) **Approval queue with clash warning** |
-| ![Conflicts](docs/screenshots/11-campus-venue-conflicts.png) **Venue conflicts** | ![Reports](docs/screenshots/12-campus-reports-sql.png) **SQL reports** |
+### Resulting tables' screenshots
+
+**Screenshot: users table**
+
+![users table](docs/screenshots/01-users-table.png)
+
+**Screenshot: events table with APPROVED / PENDING rows**
+
+![events table](docs/screenshots/02-events-table.png)
+
+**Screenshot: Exclusion-constraint error when approving overlapping events**
+
+![Exclusion-constraint error](docs/screenshots/03-exclusion-constraint-error.png)
+
+**Screenshot: Last-seat race: student B rejected (04_advanced.sql F2)**
+
+![Last-seat race](docs/screenshots/04-last-seat-race.png)
+
+**Screenshot: MongoDB Compass: event_announcements, event_feedback, activity_logs**
+
+![MongoDB Compass](docs/screenshots/05-mongodb-compass.png)
+
+### Sample screenshots of the application
+
+**Screenshot: Login and registration page**
+
+![Login and registration page](docs/screenshots/06-login-page.png)
+
+**Screenshot: Student: event catalogue with search and filters**
+
+![Student event catalogue](docs/screenshots/07-student-catalogue.png)
+
+**Screenshot: Student: calendar**
+
+![Student calendar](docs/screenshots/08-student-calendar.png)
+
+**Screenshot: Club admin: my events page**
+
+![Club admin my events](docs/screenshots/09-club-my-events.png)
+
+**Screenshot: Club admin: creating an event**
+
+![Club admin creating an event](docs/screenshots/10-club-new-event.png)
+
+**Screenshot: Campus admin: all events and approval status**
+
+![Campus admin all events](docs/screenshots/11-campus-all-events.png)
+
+**Screenshot: Campus admin: reports**
+
+![Campus admin reports](docs/screenshots/12-campus-reports.png)
 
 ---
 
@@ -315,4 +362,15 @@ docs/           requirements tracker, ER + schema, Mongo model, architecture + s
 
 ---
 
-**Original contribution (novelty):** Providing a platform for tracking club activities.. approvals, registrations, and college events planning. Combining 3 types of users in one platform: Student, Club Admins, Campus admins, assessed the gap from previous implementations and addressed it. Triggers for conflict resolving "Example 2 clashing event timings". 
+## 13. Team contributions and declaration
+
+| Team member | Contribution |
+|---|---|
+| **Dhriti Kamani** (PES1UG24AM085) | MongoDB design, SQL schema, UI, reports, integration, testing |
+| **Disha Lokesh** (PES1UG24AM093) | ER design, Next.js interface, triggers/functions, API |
+
+**Original contribution (novelty):** ClubConnect is a single platform that takes a campus club event through its whole life: a club proposes an event, the campus approves it, students register, and attendance is recorded. It replaces the chat groups, spreadsheets and e-mail threads clubs rely on today. Three kinds of users (Student, Club Admin, Campus Admin) work in one system, and each sees only what their role allows. That is enforced inside the database, not only in the interface. Scheduling clashes are caught before they become a problem. A club admin gets a venue-clash warning while preparing an event, and the database refuses to approve two events that overlap in the same venue. Back-to-back events are still allowed.
+
+The club admin workspace is built around the real workflow of running an event. An event starts as an editable draft, is submitted for approval, and becomes read-only once submitted (a database trigger enforces this). Admins can withdraw a pending event, or reopen a rejected one to fix it and resubmit. Each event can be open to everyone or to club members only, with optional manual approval, so the club decides who gets in. Admins approve or reject pending registrations, mark attendance only for confirmed registrations and only after the event has started, and post pinned announcements to participants. They read student feedback anonymously, and cancelling an event automatically cancels every live registration and notifies the affected students. One admin account can manage several clubs, but cannot touch another club's data or approve their own event, because the database withholds that permission.
+
+**Statement of AI assistance:** This project was built with the help of an AI assistant (Claude). We have read, run and tested the code we submit and can explain it.
