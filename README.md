@@ -1,4 +1,4 @@
-<img width="1280" height="747" alt="image" src="https://github.com/user-attachments/assets/b829300f-e20f-48c5-b811-2fb71f6e6db4" /># ClubConnect: Club Event Management & Registration System
+# ClubConnect: Club Event Management & Registration System
 
 > DBMS (UE23CS351A) Experiential Learning, Level 3 mini project, PES University, Aug–Dec 2026
 > Department of Computer Science and Engineering (AI & ML), B.Tech 5th semester
@@ -105,7 +105,7 @@ There are no distributed transactions: PostgreSQL commits first; events are neve
 
 **Figure 1: ER diagram of ClubConnect** (hand-drawn, Chen notation; the original conceptual design)
 
-Figure 1: ER diagram of ClubConnect[Uploading image.png…]()
+Figure 1: ER diagram of ClubConnect <img width="1280" height="747" alt="image" src="https://github.com/user-attachments/assets/b829300f-e20f-48c5-b811-2fb71f6e6db4" />
 
 
 `users`, `students`, `clubs`, `club_admins`, `club_members`, `event_categories` (self-referencing tree), `venues`, `events`, `event_status_history` (weak), `registrations`, `attendance` (weak entity), `notifications`.
