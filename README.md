@@ -102,7 +102,8 @@ There are no distributed transactions: PostgreSQL commits first; events are neve
 
 ### 4.1 PostgreSQL (12 tables)
 
-![ER diagram](er-diagram.jpeg)
+![ER diagram]<img width="1280" height="747" alt="image" src="https://github.com/user-attachments/assets/deb209ad-0960-420e-810c-9cab84f7a7c9" />
+
 
 `users`, `students`, `clubs`, `club_admins`, `club_members`, `event_categories` (self-referencing tree), `venues`, `events`, `event_status_history`, `registrations`, `attendance` (weak entity), `notifications`.
 
