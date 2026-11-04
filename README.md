@@ -11,6 +11,7 @@ ClubConnect replaces the chat groups, spreadsheets and e-mails that student club
 | **Section** | B |
 | **Faculty** | Prof. Smitha |
 | **Repository** | https://github.com/disha-lokesh/ClubConnect |
+| **Report** | ClubConnect Project Report is put in the repository |
 
 ---
 
